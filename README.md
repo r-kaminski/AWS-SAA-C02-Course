@@ -5000,6 +5000,41 @@ SQS
 
 ---
 
+### Cognito
+
+- terrible naming
+- provides **authentication, authorization, user management** for web/mobile apps
+
+
+- **USER POOLS** - sign-in and get a JSON Web Token (**JWT**)
+  - most AWS services **cannot use JWT** - API Gateway is an exception
+  - **BUT !!!!!!**, JWT can be used to access **self-managed server based resources**
+  - **MAINLY** sign-up, sign-in experience with user directory and profile management
+  - MFA, other security features
+  - **ALSO ALLOWS SOCIAL SIGN-IN with e.g. Facebook, Google, etc. and SAML**
+  - but users authenticated this way **cannot directly use AWS services**
+
+
+- **IDENTITY POOLS** - exchange a type of **external identity** for a set of **temporary AWS credentials**
+  - with these AWS credentials, we can then access AWS resources
+  - used for swapping authenticated/unauthenticated identity for AWS credentials
+  - **IDENTITY POOLS ALLOW SOCIAL SIGN-IN (e.g. Facebook), SAML, even USER POOL identities TO GET SHORT-TERM AWS CREDENTIALS**
+    - this way Identity Pools allow e.g. users authenticated through Facebook to access AWS resources
+  - how it works: IDENTITY POOLS work by **assuming an IAM role on behalf of the IDENTITY** - AWS temporary credentials are generated and provided in most cases to web/mobile app
+
+
+In case of Identity Pools, our application/Identity Pool has to deal with many different ID tokens (each for any external provider).
+- we could use User Pools to handle all the types of identities, and then use Identity Pools to swap the User Pool token (JWT) for AWS credentials
+- **WEB IDENTITY FEDERATION** - swapping of any external ID provider token for AWS temporary credentials
+- this way we standardise on a single token (User Pools token = JWT)
+
+
+- TL;DR:
+  - User Pools - **sign-up/sign-in**; JWT token that can be used for authentication in self-managed server based resources, or API Gateway. Cannot be used to access AWS resources
+  - Identity Pools - **swapping external ID provider for temporary AWS credentials**; sign-in with external identity (e.g. Facebook/Google login page), Cognito assumes a Role and generates temporary AWS credentials, passes it back to application, then AWS resources can be accessed
+
+
+
 ## CDN-and-Optimization
 
 ### Architecture Basics 
